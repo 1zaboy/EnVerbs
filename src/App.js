@@ -15,6 +15,13 @@ const formOptions = [
 ];
 
 const normalize = (value) => (value || "").trim().toLowerCase();
+const matchesExpected = (expected, input) => {
+  const normInput = normalize(input);
+  return expected
+    .split("/")
+    .map((v) => normalize(v))
+    .some((v) => v === normInput);
+};
 const randomItem = (list) => list[Math.floor(Math.random() * list.length)];
 const buildPool = (count) => {
   // Берём первые N элементов из списка глаголов без перемешивания
@@ -99,6 +106,35 @@ function Home({ selectedCount, setSelectedCount }) {
                   <Button variant="secondary" onClick={() => startMode("triple")}>Начать</Button>
                 </CardContent>
               </Card>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-slate-800/70 bg-slate-900/80">
+          <CardHeader className="flex flex-col gap-2">
+            <CardTitle>Словарь (все слова)</CardTitle>
+            <CardDescription>1, 2, 3 формы и перевод из файла <code>src/data/verbs.js</code></CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="overflow-x-auto">
+              <div className="min-w-full text-sm">
+                <div className="grid grid-cols-4 gap-2 border-b border-slate-800 pb-2 text-slate-400">
+                  <span>1 форма</span>
+                  <span>2 форма</span>
+                  <span>3 форма</span>
+                  <span>Перевод</span>
+                </div>
+                <div className="divide-y divide-slate-800">
+                  {verbs.map((v) => (
+                    <div key={v.infinitive} className="grid grid-cols-4 gap-2 py-2 items-center">
+                      <span className="text-slate-100">{v.infinitive}</span>
+                      <span className="text-slate-100">{v.pastSimple}</span>
+                      <span className="text-slate-100">{v.pastParticiple}</span>
+                      <span className="text-slate-200">{v.translation}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -201,7 +237,7 @@ function TrainerPage() {
 
     if (mode === "single") {
       const expected = question.verb[question.formKey];
-      const isCorrect = normalize(singleAnswer) === normalize(expected);
+      const isCorrect = matchesExpected(expected, singleAnswer);
       const requiredLabel = formOptions.find((f) => f.key === question.formKey)?.label;
       return {
         isCorrect,
@@ -224,7 +260,7 @@ function TrainerPage() {
       label,
       user: tripleAnswers[key],
       expected: question.verb[key],
-      ok: normalize(tripleAnswers[key]) === normalize(question.verb[key])
+      ok: matchesExpected(question.verb[key], tripleAnswers[key])
     }));
     const allCorrect = checks.every((c) => c.ok);
 
