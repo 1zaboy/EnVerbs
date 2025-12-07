@@ -59,7 +59,7 @@ function Home({ selectedCount, setSelectedCount }) {
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <Card className="border border-slate-800/70 bg-slate-900/80">
           <CardHeader className="flex flex-col gap-2">
-            <p className="text-sm uppercase tracking-wide text-blue-400">Irregular Verbs Trainer</p>
+            <p className="text-sm uppercase tracking-wide text-blue-400">Irregular Verbs Exerciser</p>
             <CardTitle>Выбор режима</CardTitle>
             <CardDescription>
               Слова берутся из файла <code>src/data/verbs.js</code>. Перед запуском выберите количество слов и режим.
