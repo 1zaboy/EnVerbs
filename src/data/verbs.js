@@ -2,6 +2,7 @@
 // Дополняйте/редактируйте этот файл: добавьте новые объекты или поменяйте существующие.
 // Формат: { infinitive: "go", pastSimple: "went", pastParticiple: "gone", translation: "идти" }
 const verbs = [
+  // Page 1
   { infinitive: "arise", pastSimple: "arose", pastParticiple: "arisen", translation: "возникать" },
   { infinitive: "awake", pastSimple: "awoke", pastParticiple: "awoken", translation: "бодрствовать" },
   { infinitive: "be", pastSimple: "was/were", pastParticiple: "been", translation: "быть" },
@@ -24,7 +25,36 @@ const verbs = [
   { infinitive: "do", pastSimple: "did", pastParticiple: "done", translation: "делать" },
   { infinitive: "draw", pastSimple: "drew", pastParticiple: "drawn", translation: "рисовать" },
   { infinitive: "dream", pastSimple: "dreamt/dreamed", pastParticiple: "dreamt/dreamed", translation: "мечтать" },
-  { infinitive: "drink", pastSimple: "drank", pastParticiple: "drunk", translation: "пить" }
+  { infinitive: "drink", pastSimple: "drank", pastParticiple: "drunk", translation: "пить" },
+  // Page 2
+  { infinitive: "drive", pastSimple: "drove", pastParticiple: "driven", translation: "ВОДИТЬ МАШИНУ" },
+  { infinitive: "eat", pastSimple: "ate", pastParticiple: "eaten", translation: "КУШАТЬ/ЕСТЬ" },
+  { infinitive: "fall", pastSimple: "fell", pastParticiple: "fallen", translation: "ПАДАТЬ" },
+  { infinitive: "feel", pastSimple: "felt", pastParticiple: "felt", translation: "ЧУВСТВОВАТЬ" },
+  { infinitive: "fight", pastSimple: "fought", pastParticiple: "fought", translation: "ДРАТЬСЯ/СРАЖАТЬСЯ" },
+  { infinitive: "find", pastSimple: "found", pastParticiple: "found", translation: "НАХОДИТЬ/ОБНАРУЖИВАТЬ" },
+  { infinitive: "fly", pastSimple: "flew", pastParticiple: "flown", translation: "ЛЕТАТЬ" },
+  { infinitive: "forget", pastSimple: "forgot", pastParticiple: "forgotten", translation: "ЗАБЫВАТЬ" },
+  { infinitive: "forgive", pastSimple: "forgave", pastParticiple: "forgiven", translation: "ПРОЩАТЬ" },
+  { infinitive: "get", pastSimple: "got", pastParticiple: "got/gotten", translation: "ПОЛУЧАТЬ" },
+  { infinitive: "give", pastSimple: "gave", pastParticiple: "given", translation: "ДАВАТЬ" },
+  { infinitive: "go", pastSimple: "went", pastParticiple: "gone", translation: "ИДТИ/ЕХАТЬ" },
+  { infinitive: "grow", pastSimple: "grew", pastParticiple: "grown", translation: "РАСТИ" },
+  { infinitive: "hang", pastSimple: "hung", pastParticiple: "hung", translation: "ВЕШАТЬ/ВИСЕТЬ" },
+  { infinitive: "have", pastSimple: "had", pastParticiple: "had", translation: "ИМЕТЬ" },
+  { infinitive: "hear", pastSimple: "heard", pastParticiple: "heard", translation: "УСЛЫШАТЬ/СЛЫШАТЬ" },
+  { infinitive: "hide", pastSimple: "hid", pastParticiple: "hidden", translation: "ПРЯТАТЬ" },
+  { infinitive: "hit", pastSimple: "hit", pastParticiple: "hit", translation: "УДАРЯТЬ/НАНОСИТЬ УЩЕРБ" },
+  { infinitive: "hold", pastSimple: "held", pastParticiple: "held", translation: "ДЕРЖАТЬ" },
+  { infinitive: "hurt", pastSimple: "hurt", pastParticiple: "hurt", translation: "ПРИЧИНЯТЬ БОЛЬ/БОЛЕТЬ" },
+  { infinitive: "keep", pastSimple: "kept", pastParticiple: "kept", translation: "ХРАНИТЬ/ОСТАВЛЯТЬ ПРИ СЕБЕ" },
+  { infinitive: "know", pastSimple: "knew", pastParticiple: "known", translation: "ЗНАТЬ" },
+  { infinitive: "leave", pastSimple: "left", pastParticiple: "left", translation: "УХОДИТЬ/УЕЗЖАТЬ" },
+  { infinitive: "lend", pastSimple: "lent", pastParticiple: "lent", translation: "ДАВАТЬ ВЗАЙМЫ" },
+  { infinitive: "let", pastSimple: "let", pastParticiple: "let", translation: "ПОЗВОЛЯТЬ/ДОПУСКАТЬ" },
+  { infinitive: "lose", pastSimple: "lost", pastParticiple: "lost", translation: "ТЕРЯТЬ" },
+  { infinitive: "make", pastSimple: "made", pastParticiple: "made", translation: "ДЕЛАТЬ/СОЗДАВАТЬ" },
+  { infinitive: "mean", pastSimple: "meant", pastParticiple: "meant", translation: "ЗНАЧИТЬ" }
 ];
 
 export default verbs;
