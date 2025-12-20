@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./com
 import { Badge } from "./components/ui/badge";
 import { Separator } from "./components/ui/separator";
 import { Input } from "./components/ui/input";
+import { Slider } from "./components/base/slider/slider";
 import verbs from "./data/verbs";
 import "./App.css";
 
@@ -13,6 +14,10 @@ const formOptions = [
   { key: "pastSimple", label: "2 форма (Past Simple)" },
   { key: "pastParticiple", label: "3 форма (Past Participle)" }
 ];
+
+const PAGE1_COUNT = 23; // фиксированный диапазон первой страницы
+const PAGE2_START = PAGE1_COUNT; // индекс, с которого начинаются слова второй страницы
+const PAGE2_COUNT = Math.max(1, verbs.length - PAGE2_START); // количество слов на второй странице
 
 const normalize = (value) => (value || "").trim().toLowerCase();
 const matchesExpected = (expected, input) => {
@@ -23,10 +28,11 @@ const matchesExpected = (expected, input) => {
     .some((v) => v === normInput);
 };
 const randomItem = (list) => list[Math.floor(Math.random() * list.length)];
-const buildPool = (count) => {
-  // Берём первые N элементов из списка глаголов без перемешивания
-  const safeCount = Math.max(1, Math.min(count, verbs.length));
-  return verbs.slice(0, safeCount);
+const buildPool = (count, startIndex = 0) => {
+  // Берём N элементов начиная с startIndex без перемешивания
+  const safeStart = Math.min(Math.max(startIndex, 0), verbs.length - 1);
+  const safeCount = Math.max(1, Math.min(count, verbs.length - safeStart));
+  return verbs.slice(safeStart, safeStart + safeCount);
 };
 
 const shuffle = (array) => {
@@ -40,18 +46,19 @@ const shuffle = (array) => {
 
 const initialTriple = { infinitive: "", pastSimple: "", pastParticiple: "" };
 
-function Home({ selectedCount, setSelectedCount }) {
+function Home({ selectedCount, setSelectedCount, startIndex, setStartIndex }) {
   const navigate = useNavigate();
 
   const startMode = (modeKey) => {
-    navigate(`/mode/${modeKey}`, { state: { count: selectedCount } });
+    navigate(`/mode/${modeKey}`, { state: { count: selectedCount, startIndex } });
   };
 
-  const handleCountChange = (value) => {
-    const num = Number(value);
-    if (!Number.isFinite(num)) return;
-    const clamped = Math.min(Math.max(num, 1), verbs.length);
-    setSelectedCount(clamped);
+  const handleRangeChange = (next) => {
+    const [startVal, endVal] = Array.isArray(next) ? next : [next.start, next.end];
+    const safeStart = Math.min(Math.max(startVal, 0), verbs.length - 1);
+    const safeEnd = Math.min(Math.max(endVal, safeStart + 1), verbs.length);
+    setStartIndex(safeStart);
+    setSelectedCount(safeEnd - safeStart);
   };
 
   return (
@@ -73,19 +80,55 @@ function Home({ selectedCount, setSelectedCount }) {
                 <Badge>
                   {selectedCount} / {verbs.length}
                 </Badge>
-                <Button size="sm" variant="outline" onClick={() => setSelectedCount(verbs.length)}>
-                  Сбросить к максимуму
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setStartIndex(0);
+                    setSelectedCount(verbs.length);
+                  }}
+                >
+                  Выбрать все
                 </Button>
               </div>
-              <Input
-                type="number"
-                min={1}
-                max={verbs.length}
-                step={1}
-                value={String(selectedCount)}
-                onChange={(e) => handleCountChange(e.target.value)}
-                className="max-w-xs"
-              />
+              <div className="space-y-2">
+                <Slider
+                  min={0}
+                  max={verbs.length}
+                  value={[startIndex, startIndex + selectedCount]}
+                  onValueChange={handleRangeChange}
+                  labelPosition="top-floating"
+                  step={1}
+                />
+                <div className="flex items-center justify-between text-sm text-slate-400">
+                  <span>Текущий диапазон</span>
+                  <span className="text-slate-100 font-semibold">
+                    {selectedCount} слов ( {startIndex + 1} — {startIndex + selectedCount} )
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => {
+                      setStartIndex(0);
+                      setSelectedCount(PAGE1_COUNT);
+                    }}
+                  >
+                    1 страница ( {PAGE1_COUNT} слов)
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => {
+                      setStartIndex(PAGE2_START);
+                      setSelectedCount(PAGE2_COUNT);
+                    }}
+                  >
+                    2 страница ( {PAGE2_COUNT} слов)
+                  </Button>
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-3">
@@ -148,13 +191,17 @@ function TrainerPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const selectedCount = React.useMemo(() => {
+  const { selectedCount, startIndex } = React.useMemo(() => {
     const value = Number(location.state?.count);
-    if (Number.isFinite(value) && value > 0) return Math.min(value, verbs.length);
-    return Math.min(12, verbs.length);
+    const start = Number.isFinite(location.state?.startIndex) ? Math.max(0, location.state.startIndex) : 0;
+    const clampedCount = Number.isFinite(value) && value > 0 ? Math.min(value, verbs.length - start) : Math.min(12, verbs.length - start);
+    return {
+      selectedCount: clampedCount,
+      startIndex: start
+    };
   }, [location.state]);
 
-  const [pool, setPool] = React.useState(() => buildPool(selectedCount));
+  const [pool, setPool] = React.useState(() => buildPool(selectedCount, startIndex));
   const [question, setQuestion] = React.useState(null);
   const [singleAnswer, setSingleAnswer] = React.useState("");
   const [tripleAnswers, setTripleAnswers] = React.useState(initialTriple);
@@ -188,14 +235,14 @@ function TrainerPage() {
   }, []);
 
   React.useEffect(() => {
-    const basePool = buildPool(selectedCount);
+    const basePool = buildPool(selectedCount, startIndex);
     const orderedPool = mode === "triple" ? shuffle(basePool) : basePool;
     setPool(orderedPool);
     setCurrentIndex(0);
     setAnswers([]);
     setStats({ correct: 0, total: 0 });
     setShowSummary(false);
-  }, [selectedCount, mode]);
+  }, [selectedCount, mode, startIndex]);
 
   React.useEffect(() => {
     if (!pool.length) return;
@@ -333,7 +380,7 @@ function TrainerPage() {
   };
 
   const rebuildPool = () => {
-    const basePool = buildPool(selectedCount);
+    const basePool = buildPool(selectedCount, startIndex);
     const orderedPool = mode === "triple" ? shuffle(basePool) : basePool;
     setPool(orderedPool);
   };
@@ -528,12 +575,23 @@ function App() {
   }, []);
 
   const defaultCount = Math.min(12, verbs.length);
+  const [startIndex, setStartIndex] = React.useState(0);
   const [selectedCount, setSelectedCount] = React.useState(defaultCount);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home selectedCount={selectedCount} setSelectedCount={setSelectedCount} />} />
+        <Route
+          path="/"
+          element={
+            <Home
+              selectedCount={selectedCount}
+              startIndex={startIndex}
+              setStartIndex={setStartIndex}
+              setSelectedCount={setSelectedCount}
+            />
+          }
+        />
         <Route path="/mode/:mode" element={<TrainerPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
